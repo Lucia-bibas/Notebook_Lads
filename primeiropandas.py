@@ -1,3 +1,4 @@
+from readline import redisplay
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -180,5 +181,139 @@ print("Primeiras 5 vendas premium:")
 print(vendas_premium.head())
 
 #2.3 Filtragem com isin() e between()
+#isin()
+regioes_sul_suldeste = ['Sul','Suldeste']
+vendas_sul_suldeste = df_vendas[df_vendas['regiao'].isin(regioes_sul_suldeste)]
 
+print(f"Número de vendas nas regiões Sul e Sudeste: {len(vendas_sul_suldeste)}")
+print("Primeiras 5 vendas nas regiões Sul e Sudeste: ")
+print(vendas_sul_suldeste.head())
 
+#between()
+
+vendas_1000_2000 = df_vendas[df_vendas['valor_venda'].between(1000,2000)]
+
+print(f"Número de enda entre R$1000,00 e R$2000,00: {len(vendas_1000_2000)}")
+
+print("Primeiras 5 vendas entre R$1000,00 e R$2000,00:")
+print(vendas_1000_2000.head())
+
+## 2_Exercício 2: Filtragem de Dados
+#2.1_Selecione apenas as colunas 'data','produto' e 'valor_venda' do DataFrame:
+colunas_data_produto_venda = df_vendas[['data','produto','valor_venda']]
+
+print("5 primeiras linhas das colunas selecionadas:")
+print(colunas_data_produto_venda.head())
+print(f"Tipo de dados{type(colunas_data_produto_venda)}")
+
+#2.2_Filtre o DataFrame para mostrar apenas as vendas do canal 'Online':
+canal_online = df_vendas[df_vendas['canal_venda'] == 'Online']
+print(f"Número de vendas do canal Online: {len(canal_online)}")
+
+print("Cinco primeiras linhas das vendas feitas pelo canal online:")
+print(canal_online.head())
+
+#2.3_Filtre o DataFrame para mostrar vendas de 'Roupas' com valor acima de 500:
+valor_roupas = df_vendas[(df_vendas['categoria'] == 'Roupas') &
+                         (df_vendas['valor_venda'] > 500)]
+
+print(f"Número de venda de roupas: {len(valor_roupas)}")
+print("Cinco primeiras linhas da venda de Roupas:")
+print(valor_roupas.head())
+
+#2.4_Use o método isin() para filtrar vendas dos produtos 'Smartphone' e 'Laptop':
+smartphone_laptop = ['Smartphone','Laptop']
+vendas_smartphone_laptop = df_vendas[df_vendas['produto'].isin(smartphone_laptop)]
+
+print(f"Número de vendas de Smartphone e Laptop: {len(vendas_smartphone_laptop)}")
+print("Primeiras cinco linhas das vendas de Smartphone e Laptop:")
+print(vendas_smartphone_laptop.head())
+
+#2.5_Use o método between() para encontrar vendas com quantidades entre 3 e 5 unidades:
+
+quantidade_3_5 = df_vendas[df_vendas['quantidade'].between(3,5)]
+print(f"Quantidade de vendas entre 3 e 5 produtos: {len(quantidade_3_5)}")
+print("Primeiras 5 vendas de 5 e 3 produtos:")
+print(quantidade_3_5.head())
+
+##3. Ordenação e Indexação
+
+#3.1 Ordenando dados:
+#sort_values():
+#Ordenando por uma coluna em ordem crescente (padrão)
+df_ordenado_crescente = df_vendas.sort_values('valor_venda')
+
+print("5 vendas com os menores valores:")
+print(df_ordenado_crescente.head())
+#Ordenando por uma coluna em ordem decrescente
+df_ordenando_decrescente = df_vendas.sort_values('valor_venda',ascending=False)
+
+print("5 vendas com maiores valores:")
+print(df_ordenando_decrescente.head())
+
+#Ordenando mútiplas colunas:
+#Primeiro por categoria (A-Z) e depois por valor_venda (maior para menor)
+df_ordenado_multi = df_vendas.sort_values(['categoria','valor_venda'],
+                                          ascending=[True,False])
+print("Ordenação por categoria e depois por valor (decrescente):")
+print(df_ordenado_multi.head(10))
+
+#3.2 Redefinindo e Usando Índices
+#Definindo uma coluna como índice
+df_indexado =  df_vendas.set_index('data')
+
+print("DataFrame com 'data' como índice:")
+print(df_indexado.head())
+
+#Resetando o índice para voltar ao formato original
+df_reset = df_indexado.reset_index()
+
+print("DataFrame após reset do índice:")
+print(df_reset.head())
+
+#Acessando dados através do índice
+#(Importante: assumindo que 'data' ainda é o índice)
+print("Vendas em uma data específica:")
+try:
+    data_exemplo = df_indexado.index[0]#pegando a primeira data como exemplo
+    print(f"Vendas em {data_exemplo}:")
+    redisplay(df_indexado.loc[data_exemplo])
+except:
+    print("Certifique-se de que o DataFrame está indexado por 'data'")
+
+##Execício 3: Ordenação e Indexação
+
+#3.1_Ordene o DataFrame por 'avaliação' em ordem decrescente e mostre as 10 primeiras linhas
+ordem_avaliacao = df_vendas.sort_values('avaliacao',ascending=False)
+
+print("Cinco primeiras avaliações com menores valores:")
+print(ordem_avaliacao.head())
+
+#3.2_Ordene o DataFrame primeiro por 'regiao' (A-Z) e depois por 'valor_venda'
+#(maior para menor)
+
+ordem_regiao = df_vendas.sort_values('regiao',ascending=True)
+ordem_venda = df_vendas.sort_values('valor_venda',ascending=False)
+
+print("Regiões de A-Z")
+print(ordem_regiao.head())
+print("Maiores vendas:")
+print(ordem_venda.head())
+
+#3.3_Defina a coluna 'produto' como índice do DataFrame e mostre as 5 primeiras linhas
+df_index_2 = df_vendas.set_index('produto')
+
+print("DataFrame 'produto' como índice:")
+print(df_index_2.head())
+
+#3.4_Com o DataFrame indexado por ´produto´na questão anterior,acesse os dados do produto 'Smartphone'
+#(use loc)
+
+print("Ìndice de Smartphones")
+try:
+    produto_smartphone = df_index_2.index[0]
+    print(f"Vendas de {produto_smartphone}")
+    redisplay(df_index_2.loc[produto_smartphone])
+
+except:
+    print("Certifique-se de que o DataFrame está indexado por 'produto'")
