@@ -309,11 +309,75 @@ print(df_index_2.head())
 #3.4_Com o DataFrame indexado por ´produto´na questão anterior,acesse os dados do produto 'Smartphone'
 #(use loc)
 
-print("Ìndice de Smartphones")
+print("Vendas de Smartphones:")
 try:
-    produto_smartphone = df_index_2.index[0]
-    print(f"Vendas de {produto_smartphone}")
-    redisplay(df_index_2.loc[produto_smartphone])
+    vendas_smartphone = df_index_2.loc['Smartphone']
+    print(vendas_smartphone)
+except KeyError:
+    print("Produto 'Smartphone' não encontrado no índice.")
+#3.5_Resete o índice para retornar a forma original e mostre as 5 primeiras linhas
+df_reset = df_index_2.reset_index()
 
-except:
-    print("Certifique-se de que o DataFrame está indexado por 'produto'")
+print("DataFrame após reset do índice:")
+print(df_reset.head())
+
+##4_Métodos estatísticos e Agregações BÁSICAS
+#4.1 Estatísticas Básicas
+#Calculando a média(mean) de uma coluna
+media_valor = df_vendas['valor_venda'].mean()
+print(f"Valor médio de venda: R${media_valor:.2f}")
+
+#Calculando a soma (sum) de uma coluna
+total_vendas = df_vendas['valor_venda'].sum()
+print(f"Valor total de vendas: R${total_vendas:.2f}")
+
+#Calculando o mínimo (min) e máximo (max)
+min_valor = df_vendas['valor_venda'].min()
+max_valor = df_vendas['valor_venda'].max()
+
+print(f"Menor valor de venda: R${min_valor:.2f}")
+print(f"Maior valor de venda: R${max_valor:.2f}")
+
+#Calculando a mediana (median / 50º percentil)
+mediana_valor = df_vendas['valor_venda'].median()
+print(f"Valor mediano de venda: R${mediana_valor:.2f}")
+
+#Calculando outros percentis
+percentil_25 = df_vendas['valor_venda'].quantile(0.25)
+percentil_75 = df_vendas['valor_venda'].quantile(0.75)
+
+print(f"25º percentil do valor de venda: R${percentil_25:.2f}")
+print(f"75º percentil do valor de venda: R${percentil_75:.2f}")
+
+#Calculando o desvio padrão (std) e variância (var)
+desvio_padrao = df_vendas['valor_venda'].std()
+variancia = df_vendas['valor_venda'].var()
+
+print(f"Desvio padrão do valor de venda: R${desvio_padrao:.2f}")
+print(f"Variância do valor de venda: R${variancia:.2f}")
+
+#4.1 Agregações por catgoria
+#Calculando a média por categoria
+media_por_categoria = df_vendas.groupby('categoria')['valor_venda'].mean()
+
+print("Valor médio de venda por categória:")
+print(media_por_categoria)
+
+#Calculando mútiplas estatísticas por categoria
+stats_por_categoria = df_vendas.groupby('categoria')['valor_venda'].agg(['count', 'mean', 'min', 'max'])
+
+print("Estatísticas por categoria:")
+print(stats_por_categoria)
+
+#Renomeando as colunas para melhor legilidade
+stats_por_categoria.columns = ['Contagem','Média','Mínimo','Máximo']
+
+print("Estatíticas por categoria (colunas renomeadas):")
+print(stats_por_categoria)
+
+#Exercício 4
+#4.1_Calcule a média da coluna 'quantidade'
+media_quantidade = df_vendas['quantidade'].mean()
+print(f"Valor médio de quantidade  de produtos: {media_quantidade}")
+
+#4.2_Calcule a soma total da coluna 'valor_venda' para ter o faturamento total
