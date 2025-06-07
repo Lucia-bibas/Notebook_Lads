@@ -381,3 +381,126 @@ media_quantidade = df_vendas['quantidade'].mean()
 print(f"Valor médio de quantidade  de produtos: {media_quantidade}")
 
 #4.2_Calcule a soma total da coluna 'valor_venda' para ter o faturamento total
+faturamento_total =  df_vendas['valor_venda'].sum()
+print(f"O faturamento total é de: R${faturamento_total:.2f}")
+
+#4.3_Encontre o valor máximo de 'avaliacao' de cada categoria de produto
+avaliacao_categoria = df_vendas.groupby('categoria')['avaliacao'].agg(['max'])
+print(avaliacao_categoria)
+
+#4.4_Calcule o vaçor médio de venda por região e ordene do maior para o menor
+media_venda_regiao = df_vendas.groupby('regiao')['valor_venda'].agg(['count','mean'])
+media_venda_regiao.columns = ['Contagem','Média']
+decresc_mvd = media_venda_regiao.sort_values('Contagem',ascending=False)
+
+print("Tabela de valor média por região decrecente")
+print(decresc_mvd)
+
+#4.5_Calcule a contagem, média, mínimo e máximo de 'valor_venda para cada 'canal_venda'
+canal_valor = df_vendas.groupby('canal_venda')['valor_venda'].agg(['count','mean','min','max'])
+
+canal_valor.columns = ['Contagem','Média','Mínimo','Máximo']
+print("Tabela do valor de venda por cada canal:")
+print(canal_valor)
+
+##5_Agrupamento de dados (Groupy)
+#5.1 O conceito de Groupy: permite dividir os dados em grupos com base em uma ou mais colunas e aplicar funções para calcular estísticas de cada grupo
+#Dividio em três etapas:
+#Split: dividir dados em grupos
+#Apply: Aplicar uma funçãi a cada grupo
+#Combine: Combinar os resultados em uma estrutura de dados
+
+#Exemplo 1: agrupando por catgoria e calculando a média de valor_venda
+media_por_categoria =df_vendas.groupby('categoria')['valor_venda'].mean()
+print("Valor médio de venda por categoria:")
+print(media_por_categoria)
+#Visualizando o tipo de dados retornando
+print(f"Tipo de dados: {type(media_por_categoria)}")
+
+#5.2 Agregações com groupy
+#Contagem de vendas por região
+contagem_por_regiao = df_vendas.groupby('regiao')['valor_venda'].count()
+
+print("Número de vendas por região:")
+print(contagem_por_regiao)
+#Soma do valor de vendas por regiao
+soma_por_regiao = df_vendas.groupby('regiao')['valor_venda'].sum()
+
+print("Valor total de vendas por região")
+print(soma_por_regiao)
+
+# Calculando múltiplas estatísticas simultaneamente
+stats_por_regiao = df_vendas.groupby('regiao')['valor_venda'].agg(['count', 'sum', 'mean', 'min', 'max'])
+
+print("Estatísticas completas por região:")
+stats_por_regiao.columns = ['Contagem', 'Soma', 'Média', 'Mínimo', 'Máximo']
+print(stats_por_regiao)
+
+#5.3 Agrupando por múltiplas colunas
+#Agrupando por categoria e região   
+agrupamento_categoria_regiao = df_vendas.groupby(['categoria', 'regiao'])['valor_venda'].sum()
+
+print("Valor total de vendas por categoria e região:")
+print(agrupamento_categoria_regiao)
+
+# Convertendo para um formato mais legível (tabela pivô)
+vendas_pivot = agrupamento_categoria_regiao.unstack()
+
+print("Tabela pivô de vendas por região e categoria:")
+print(vendas_pivot)
+
+#5.4 Aplicando diferntes agregaaões a diferentes colunas
+# Aplicando diferentes funções a diferentes colunas
+agg_multiplas_colunas = df_vendas.groupby('categoria').agg({
+    'valor_venda': ['sum', 'mean'],
+    'quantidade': ['sum', 'mean'],
+    'avaliacao': 'mean'
+})
+
+print("Agregações múltiplas por categoria:")
+agg_multiplas_colunas.columns = ['_'.join(col).strip() for col in agg_multiplas_colunas.columns.values]
+print(agg_multiplas_colunas)
+
+#Execício 5
+#5.1_Agrupe osd aos por 'canal_venda' e calcule o valor total de vendas para cada canal
+canal_venda_total = df_vendas.groupby('canal_venda')['valor_venda'].sum()
+print("Valor total de vendas por canal:")
+print(canal_venda_total)
+#5.2_Agrupe por 'estado' e calcule a quantidade média de itens vendidos por estado
+quantidade_media_estado = df_vendas.groupby('estado')['quantidade'].mean()
+print("Quantidade média de itens vendidos por estado:")
+print(quantidade_media_estado)
+
+#5.3_agrupe por 'catgoria' e calcule a avaliação média de produtos em cada categoria
+avaliacao_media_categoria = df_vendas.groupby('categoria')['avaliacao'].mean()
+print("Avaliação média de produtos por categoria:")
+print(avaliacao_media_categoria)
+
+#5.4_Agrupe por 'regiao' e 'canal_venda' e calcule o valor total de vendas para cada combinação
+vendas_regiao_canal = df_vendas.groupby(['regiao', 'canal_venda'])['valor_venda'].sum()
+print("Valor total de vendas por região e canal:")
+print(vendas_regiao_canal)
+
+#5.5_Aplique múltiplas funções de agregação (contagem, média, mínimo e máximo) na coluna 'valor_venda' agrupada por 'categoria'
+valor_venda_categoria = df_vendas.groupby('categoria')['valor_venda'].agg(['count', 'mean', 'min', 'max'])
+print("Contagem, média, mínimo e máximo de valor_venda por categoria:")
+print(valor_venda_categoria)
+
+##6 Manipulação de dados e criação de colunas
+#6.1 Manipulando tipos de colunas
+# Verificando o tipo de dado da coluna 'data'
+print(f"Tipo de dado da coluna 'data': {df_vendas['data'].dtype}")  
+# Convertendo a coluna 'data' para datetime (se necessário)
+df_vendas['data'] = pd.to_datetime(df_vendas['data'])
+print(f"Novo tipo de dado da coluna 'data': {df_vendas['data'].dtype}")
+# Extraindo componentes da data
+df_vendas['ano'] = df_vendas['data'].dt.year
+df_vendas['mes'] = df_vendas['data'].dt.month
+df_vendas['dia'] = df_vendas['data'].dt.day
+df_vendas['dia_semana'] = df_vendas['data'].dt.day_name()
+
+# Visualizando as novas colunas
+print("Primeiras linhas com as novas colunas de data:")
+print(df_vendas[['data', 'ano', 'mes', 'dia', 'dia_semana']].head())
+#6.2 Criando novas colunas com operacões aritiméticas
+
