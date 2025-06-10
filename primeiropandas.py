@@ -503,4 +503,112 @@ df_vendas['dia_semana'] = df_vendas['data'].dt.day_name()
 print("Primeiras linhas com as novas colunas de data:")
 print(df_vendas[['data', 'ano', 'mes', 'dia', 'dia_semana']].head())
 #6.2 Criando novas colunas com operacões aritiméticas
+# Criando uma coluna de valor total (valor_venda * quantidade)
+df_vendas['valor_total'] = df_vendas['valor_venda'] * df_vendas['quantidade']
+
+# Criando uma coluna de desconto (10% do valor_venda)
+df_vendas['desconto'] = df_vendas['valor_venda'] * 0.1
+
+# Criando uma coluna de valor com desconto
+df_vendas['valor_com_desconto'] = df_vendas['valor_venda'] - df_vendas['desconto']
+
+# Visualizando as novas colunas
+print("Primeiras linhas com as novas colunas calculadas:")
+print(df_vendas[['valor_venda', 'quantidade', 'valor_total', 'desconto', 'valor_com_desconto']].head())
+#6.3 Aplicando funções personalizadas com apply()
+# Definindo uma função para categorizar o valor da venda
+def categorizar_valor(valor):
+    if valor < 100:
+        return 'Baixo'
+    elif valor < 1000:
+        return 'Médio'
+    else:
+        return 'Alto'
+
+# Aplicando a função à coluna 'valor_venda' para criar a coluna 'faixa_preco'
+df_vendas['faixa_preco'] = df_vendas['valor_venda'].apply(categorizar_valor)
+print(df_vendas[['valor_venda', 'faixa_preco']].head())
+
+# Definindo uma função para categorizar a quantidade
+def categorizar_quantidade(qtd):
+    if qtd <= 2:
+        return 'Pequeno'
+    elif qtd <= 5:
+        return 'Médio'
+    else:
+        return 'Grande'
+
+# Aplicando a função à coluna 'quantidade'
+df_vendas['tamanho_pedido'] = df_vendas['quantidade'].apply(categorizar_quantidade)
+print(df_vendas[['quantidade', 'tamanho_pedido']].head())
+
+# Visualizando as novas colunas categóricas
+print("Primeiras linhas com as novas colunas categóricas:")
+print(df_vendas[['valor_venda', 'faixa_preco', 'quantidade', 'tamanho_pedido']].head())
+# Verificando a contagem de cada categoria
+print("Contagem por faixa de preço:")
+print(df_vendas['faixa_preco'].value_counts())
+
+print("Contagem por tamanho de pedido:")
+print(df_vendas['tamanho_pedido'].value_counts())
+
+#6_Exercício
+#6.1_Crie uma nova coluba 'trimestre' baseada no mês da venda (1: Jan-Mar,2: Abr-Jun,etc)
+def identificar_trimestre(mes):
+    if mes in [1, 2, 3]:
+        return 1
+    elif mes in [4, 5, 6]:
+        return 2
+    elif mes in [7, 8, 9]:
+        return 3
+    else:
+        return 4
+df_vendas['trimestre'] = df_vendas['mes'].apply(identificar_trimestre)
+print("Primeiras linhas com a nova coluna 'trimestre':")
+print(df_vendas[['mes', 'trimestre']].head())
+
+#6.2_Crie uma nova coluna 'dia_util' que indica se o dia da venda é um dia útil (segunda a sexta)
+def verificar_dia_util(dia_semana):
+    if dia_semana in ['segunda', 'terça', 'quarta', 'quinta', 'sexta']:
+        return True
+    else:
+        return False
+df_vendas['dia_util'] = df_vendas['dia_semana'].apply(verificar_dia_util)
+print("Primeiras linhas com a nova coluna 'dia_util':")
+print(df_vendas[['dia_semana', 'dia_util']].head())
+#6.3_Crie uma coluna 'margem_lucro' que é 30% do valor_venda
+df_vendas['margem_lucro'] = df_vendas['valor_venda'] * 0.3
+print("Primeiras linhas com a nova coluna 'margem_lucro':")
+print(df_vendas[['valor_venda', 'margem_lucro']].head())
+#6.4_Crie uma coluna categórica 'nivel_avaliacao' baseada na avaliacao: 'Ruim' (1-2), 'Regular'(3), 'Bom'(4), 'Excelente'(5)
+def nivel_avaliacao(avaliacao):
+    if avaliacao <= 2:
+        return 'Ruim'
+    elif avaliacao == 3:
+        return 'Regular'
+    elif avaliacao == 4:
+        return 'Bom'
+    else:
+        return 'Excelente'
+df_vendas['nivel_avaliacao'] = df_vendas['avaliacao'].apply(nivel_avaliacao)
+print("Primeiras linhas com a nova coluna 'nivel_avaliacao':")
+print(df_vendas[['avaliacao', 'nivel_avaliacao']].head())
+#6.5_Crie uma coluna 'acima_media' que tenha valor booleano indicando se o valor_venda é acima da média geral
+media_valor_venda = df_vendas['valor_venda'].mean()
+df_vendas['acima_media'] = df_vendas['valor_venda'] > media_valor_venda
+print("Primeiras linhas com a nova coluna 'acima_media':")
+print(df_vendas[['valor_venda', 'acima_media']].head()) 
+
+##7. Visualização de Dados
+#7.1 Gráficos de linha
+# Agrupando vendas por mês
+vendas_mensais = df_vendas.groupby('mes')['valor_total'].sum()
+vendas_mensais.plot(kind='line') 
+plt.title('Valor Total de Vendas por Mês') # Título do gráfico
+plt.xlabel('Mês') # Rótulo do eixo x
+plt.ylabel('Valor Total (R$)') # Rótulo do eixo y
+print("Chegou antes do plt.show()")
+plt.show() # Exibe o gráfico
+
+
 
